@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Factorial
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //n - it's digit factorial, fact - it's result
+            long fact = 0, n = 7;
+
+            fact = Factorial(n);
+
+            Console.WriteLine(fact);
+        }
+
+        //Recursion Method computing factorial digit
+        public static long Factorial(long n)
+        {
+            if (n == 0 || n == 1)
+                return 1;
+            else
+                return n * Factorial(n - 1);            
+        }
+    }
+}
