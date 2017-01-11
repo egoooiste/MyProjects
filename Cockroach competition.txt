@@ -1,0 +1,191 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
+
+namespace Tarakan
+{
+    
+    class Program
+    {
+        static void Main(string[] args)
+        {          
+            try
+            {
+                //Create object | you must set quantity members since 1 till 10
+                Judge j = new Judge(5);
+
+                bool flag = true;
+
+                while (flag)
+                {
+                    Console.WriteLine("Do you want start new competition? y\\n");
+
+                    string k = Console.ReadLine();
+
+                    switch (k)
+                    {
+                        case "y":                            
+                                j.Start_Cockroachs();
+
+                                j.Results();
+
+                                j.Clear();
+                            break;
+
+                        case "n":
+                            flag = false;
+                            break;      
+                     }
+                }              
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }    
+    
+    //Class Cockroach - creates object with fields name, speed
+    class Cockroach
+    {
+        //it's id(name) Cockroack
+        static int count = 1;
+
+        public string name;
+        public int   speed;
+
+        public int step;
+
+        //quantity itertions of distance
+        public static int distance = 5;
+
+        //Constructur object
+        public Cockroach()
+        {
+            name = count.ToString();
+            speed = 0;
+            step  = 0;
+            count++;
+        }
+
+        //Null in Object's fields
+        public void All_null()
+        {
+            speed = 0;
+            step  = 0;
+        }
+    }
+
+    //Class Judge
+    class Judge
+    {
+        static Random rnd = new Random();        
+
+        //Array with members competition
+        static Cockroach[] members;
+
+        //Constructor initializes Array with quantity members
+        public Judge(int quantity_cockroach)
+        {
+            if (quantity_cockroach > 0  && quantity_cockroach < 10)
+            {
+                members = new Cockroach[quantity_cockroach];
+
+                Initial_Members();
+            }
+        }
+
+        //Initial Objects Cockroach
+        public void Initial_Members()
+        {
+            if (members.Length > 0)
+                for(int i = 0; i < members.Length; i++)
+                {
+                    Cockroach c = new Cockroach();
+                    members[i] = c;
+                }
+        }
+
+        //object cap
+        static object loker = new object();
+
+        //Method start one member
+        public void GoOne(Object obj)
+        {
+            //lock - this block code fully performed in thread 
+            lock (loker)
+            {
+                Cockroach c = (Cockroach)obj;
+
+                Console.Write(c.name + ": ");
+
+                for (; c.step < Cockroach.distance; c.step++)
+                {
+                    int tmp = rnd.Next(1, 5);
+
+                    c.speed += tmp;
+
+                    for (int j = 0; j < tmp; j++)
+                        Console.Write(">");
+
+                    Thread.Sleep(500);
+                }
+            }
+        }        
+
+        //Method Start All members
+        public void Start_Cockroachs()
+        {
+            if (members.Length > 0)
+                for (int i = 0; i < members.Length; i++)
+                {
+                    //Start diferent thread for every Object
+                      Thread th = new Thread(new ParameterizedThreadStart(GoOne));
+
+                      th.Start(members[i]);
+
+                      Thread.Sleep(3000);
+
+                    Console.WriteLine();
+                }
+        }
+
+        //Compute Winner this competition
+        public void Results()
+        {
+            int tmp = 0, tmp2 = 0;
+            string name = null, name2 = null;
+
+            foreach(Cockroach c in members)
+            {
+                if (c.speed == tmp)
+                {
+                    tmp2 = c.speed;
+                    name2 = c.name;
+                }
+
+                if (c.speed > tmp)
+                {
+                    tmp = c.speed;
+                    name = c.name;
+                }              
+            }
+            if(tmp > tmp2)
+                Console.WriteLine("Winner Cockroach number: " + name + " | speed: " + tmp);
+            else
+                Console.WriteLine("No winners !!!");
+        }
+
+        //Crear results' members for next competition
+        public void Clear()
+        {
+            foreach (Cockroach c in members)
+                c.All_null();
+        }
+
+    }
+}
