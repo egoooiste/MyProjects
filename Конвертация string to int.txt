@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StringToInt
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //incoming string with digit
+            string str = "9856";
+
+            try
+            {
+                //General method
+                StringConvertToInt(str);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        //General method converts String to Int
+        public static void StringConvertToInt(string s)
+        {
+            int x = 0;
+
+            char[] arr = new char[s.Length];
+
+            arr = StringArrayToCharArray(s);
+
+            x = CharArrayToInt(arr);
+
+            Console.WriteLine(x);            
+        }
+
+        //Copy String to Char Array
+        public static char[] StringArrayToCharArray(string s)
+        {
+            char[] arr = new char[s.Length] ;
+
+            //it's correct string's data for revise
+            string num = "0123456789" ;
+
+            int count = -1;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                //revise our string on incorrect data
+                for (int j = 0; j < num.Length; j++)
+                    if (s[i] == num[j])
+                    {
+                        count++;
+                        break;
+                    }
+                       
+                if(count == i)
+                        arr[i] = s[i];
+            }
+
+            //if count unequal string length, incoming string has incorrect data
+            if(count != s.Length - 1)
+            {
+                Console.WriteLine("Incorrect data");
+                arr = null;
+            }
+
+            return arr;
+        }
+
+        //Convert Char to Int with Math instance
+        public static int CharArrayToInt(char [] arr)
+        {
+            int x = 0;
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                x = x * 10 + arr[i] - '0';
+            }
+
+            return x;
+        }
+    }
+}
