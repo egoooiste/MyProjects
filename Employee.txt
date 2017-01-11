@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Collections;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Employee
+{
+    
+    class Program
+    {
+        //Arrays with employee
+        public static IEmployee[] iarr;
+        public static IEmployee[] iarr2;
+
+        static void Main(string[] args)
+        {
+            //Add Employee for example
+            iarr = new IEmployee[] { new Fix(0, "Ivan", 5500), new Time(1, "Dima", 40), new Fix(3, "Olya", 4500), new Time(4, "Vika", 45), new Fix(5, "Oleg", 7230) };
+
+            //sort salarys
+            General.SortSalary(iarr);
+
+            //Show Imployee
+            foreach (IEmployee i in iarr)
+                i.Show();
+
+            //Serialize in file
+            WriteEmpl();
+
+            Console.WriteLine("___________________________");
+
+            //DeSerialize from file
+            ReadEmpl();
+        }
+
+        //Serialize data to file
+        public static void WriteEmpl()
+        {
+            FileStream fs = new FileStream("3.dat", FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+            bf.Serialize(fs, iarr);
+
+            fs.Close();
+        }
+
+        //DeSerialize data from file
+        public static void ReadEmpl()
+        {
+            FileStream fs = new FileStream("3.dat", FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+           // iarr2 = new IEmployee[] { };
+
+            iarr2 = (IEmployee[])bf.Deserialize(fs);
+
+            fs.Close();
+
+            foreach (IEmployee i in iarr2)
+                i.Show();
+        }
+    }    
+
+    public interface IEmployee
+    {
+        int Id { get; set; }
+        string Name { get; set; }
+        double Salary { get; set; }
+        string Description { get; set; }
+        void Show();
+    }
+    //General class for Employee
+    [Serializable]
+    public abstract class General : IEmployee
+    {        
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double Salary { get; set; }
+        public string Description { get; set; }
+        public void Show()
+        {
+            Console.WriteLine("Id: {0}    Name: {1}   Salary: {2}   Type Employee: {3} ", Id, Name, Salary, Description);
+        }
+
+        //Sort Employee salary
+        public static void SortSalary(IEmployee[] iarr)
+        {
+            int    tmp_id;
+            string tmp_name;
+            double tmp_salary;
+            string tmp_desc;            
+
+            for(int i = 0; i < iarr.Length; i++)
+            {
+                for(int j = 0; j < iarr.Length; j++)
+                {
+                    if (iarr[i].Salary > iarr[j].Salary)
+                    {
+                        tmp_id = iarr[i].Id;
+                        tmp_name = iarr[i].Name;
+                        tmp_salary = iarr[i].Salary;
+                        tmp_desc = iarr[i].Description;
+
+                        iarr[i].Id = iarr[j].Id;
+                        iarr[i].Name = iarr[j].Name;
+                        iarr[i].Salary = iarr[j].Salary;
+                        iarr[i].Description = iarr[j].Description;
+
+                        iarr[j].Id = tmp_id;
+                        iarr[j].Name = tmp_name;
+                        iarr[j].Salary = tmp_salary;
+                        iarr[j].Description = tmp_desc;
+                    }
+                }
+            }
+        }
+    }
+
+    //Class Fix employee
+    [Serializable]
+    public class Fix : General
+    {        
+        public Fix(int id, string name, double earn)
+        {
+            base.Id     = id;
+            base.Name   = name;
+            base.Salary = earn;
+            base.Description = "Fix";
+        }
+
+        public Fix() { }
+    }
+
+    //Class Temp employee
+    [Serializable]
+    public class Time : General
+    {
+        static double coefficient = 20.8 * 8;
+        public Time(int id, string name, double earn)
+        {
+            base.Id = id;
+            base.Name = name;
+            base.Salary = coefficient * earn;
+            base.Description = "Time";
+        }
+
+        public Time() { }
+    }
+}
