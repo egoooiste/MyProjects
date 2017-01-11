@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DelSymbol
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //incoming string
+            string str = "Hello World";
+
+            //delete symbol 
+            char c = 'o';   
+
+            //two methods
+            str = DelSymb1(str, c);
+
+            Console.WriteLine("Method 1: {0}", str);
+
+            str = DelSymb2(str, c);
+
+            Console.WriteLine("Method 2: {0}", str);
+
+        }
+
+        //Method 1
+        public static string DelSymb1(string s, char c)
+        {
+            string tmp = null;
+
+            for(int i = 0; i < s.Length; i++)
+            {
+                if (s[i] != c)
+                    tmp += s[i];
+            }
+            return tmp;
+        }
+
+
+        //Method 2
+        public static string DelSymb2(string s, char c)
+        {
+            char[] arr = new char[s.Length];
+
+            arr = StringToChar(s);
+
+            string tmp = null;
+
+            for(int i = 0; i < arr.Length; i++)
+            {
+                if (arr[i] != c)
+                    tmp += arr[i];
+            }
+
+            return tmp;
+        }
+
+        //Copy String to Char array
+        public static char[] StringToChar(string s)
+        {
+            char[] arr = new char[s.Length];
+
+            for(int i = 0; i < s.Length; i++)
+            {
+                arr[i] = s[i];
+            }
+            return arr;
+        }
+    }
+}
